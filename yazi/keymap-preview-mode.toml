@@ -1,0 +1,38 @@
+# Yazi keymap configuration - PREVIEW MODE
+# This is an alternative keymap where j/k control preview instead of file navigation
+
+[mgr]
+prepend_keymap = [
+    # === PREVIEW MODE ACTIVE ===
+    # In this mode, j/k control the preview pane directly
+    { on = "j", run = "seek 1", desc = "Preview: Down 1 line" },
+    { on = "k", run = "seek -1", desc = "Preview: Up 1 line" },
+    
+    # Use arrow keys for file navigation instead
+    { on = "<Down>", run = "arrow 1", desc = "File: Move cursor down" },
+    { on = "<Up>", run = "arrow -1", desc = "File: Move cursor up" },
+    { on = "<Right>", run = "enter", desc = "File: Enter directory" },
+    { on = "<Left>", run = "leave", desc = "File: Leave directory" },
+    
+    # Alternative file navigation with h/l
+    { on = "h", run = "leave", desc = "File: Leave directory" },
+    { on = "l", run = "enter", desc = "File: Enter directory" },
+    
+    # Fast preview navigation
+    { on = "J", run = "seek 10", desc = "Preview: Down 10 lines" },
+    { on = "K", run = "seek -10", desc = "Preview: Up 10 lines" },
+    { on = "<C-d>", run = "seek 25", desc = "Preview: Half page down" },
+    { on = "<C-u>", run = "seek -25", desc = "Preview: Half page up" },
+    { on = "<C-f>", run = "seek 50", desc = "Preview: Page down" },
+    { on = "<C-b>", run = "seek -50", desc = "Preview: Page up" },
+    
+    # Preview navigation - vim-like
+    { on = "g", run = "seek -999999", desc = "Preview: Go to top" },
+    { on = "G", run = "seek 999999", desc = "Preview: Go to bottom" },
+    { on = "0", run = "seek -999999", desc = "Preview: Go to beginning" },
+    { on = "$", run = "seek 999999", desc = "Preview: Go to end" },
+    
+    # Exit preview mode (switch back to normal keymap)
+    { on = "p", run = "shell 'cp ~/.config/yazi/keymap.toml.backup ~/.config/yazi/keymap.toml && pkill -USR1 yazi' --orphan", desc = "Exit Preview Mode" },
+    { on = "<Esc>", run = "shell 'cp ~/.config/yazi/keymap.toml.backup ~/.config/yazi/keymap.toml && pkill -USR1 yazi' --orphan", desc = "Exit Preview Mode" },
+]

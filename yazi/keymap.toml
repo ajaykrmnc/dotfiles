@@ -1,0 +1,23 @@
+# Yazi keymap configuration - Enhanced scrolling
+# Fixed bat plugin scrolling support
+
+[mgr]
+prepend_keymap = [
+    # Basic preview scrolling
+    { on = "J", run = "seek 5", desc = "Preview: scroll down 5 lines" },
+    { on = "K", run = "seek -5", desc = "Preview: scroll up 5 lines" },
+
+    # Alternative scrolling with d/u (vim-like)
+    { on = "d", run = "seek 15", desc = "Preview: scroll down 15 lines" },
+    { on = "u", run = "seek -15", desc = "Preview: scroll up 15 lines" },
+
+    # Page-wise scrolling
+    { on = "<C-d>", run = "seek 25", desc = "Preview: half page down" },
+    { on = "<C-u>", run = "seek -25", desc = "Preview: half page up" },
+    { on = "<C-f>", run = "seek 50", desc = "Preview: page down" },
+    { on = "<C-b>", run = "seek -50", desc = "Preview: page up" },
+
+    # Go to top/bottom
+    { on = "g", run = "seek -999999", desc = "Preview: go to top" },
+    { on = "G", run = "seek 999999", desc = "Preview: go to bottom" },
+]

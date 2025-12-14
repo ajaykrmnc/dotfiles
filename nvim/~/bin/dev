@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Development environment launcher
+# Usage: dev [session_name] [directory]
+
+SESSION_NAME=${1:-"dev"}
+DIRECTORY=${2:-$(pwd)}
+
+# Check if tmux session already exists
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    echo "Session '$SESSION_NAME' already exists. Attaching..."
+    tmux attach-session -t "$SESSION_NAME"
+else
+    echo "Creating new session '$SESSION_NAME' in $DIRECTORY"
+    
+    # Create new session with nvim
+    tmux new-session -d -s "$SESSION_NAME" -c "$DIRECTORY"
+    
+    # Rename the first window
+    tmux rename-window -t "$SESSION_NAME:1" "editor"
+    
+    # Start nvim in the first window
+    tmux send-keys -t "$SESSION_NAME:1" "nvim ." Enter
+    
+    # Create a second window for terminal
+    tmux new-window -t "$SESSION_NAME" -n "terminal" -c "$DIRECTORY"
+    
+    # Create a third window for git/misc
+    tmux new-window -t "$SESSION_NAME" -n "git" -c "$DIRECTORY"
+    
+    # Go back to the first window
+    tmux select-window -t "$SESSION_NAME:1"
+    
+    # Attach to the session
+    tmux attach-session -t "$SESSION_NAME"
+fi

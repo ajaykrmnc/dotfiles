@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# nvim-gui - A wrapper script to open nvim in a new terminal window
+# This allows nvim to be used as a GUI application for file associations
+
+# Check if we're running in a terminal
+if [ -t 0 ]; then
+    # We're in a terminal, just run nvim directly
+    exec /opt/homebrew/bin/nvim "$@"
+else
+    # We're not in a terminal (likely called from Finder or file association)
+    # Open a new terminal window with nvim
+    if command -v osascript >/dev/null 2>&1; then
+        # Use AppleScript to open Terminal with nvim
+        osascript -e "
+        tell application \"Terminal\"
+            activate
+            do script \"cd '$PWD' && /opt/homebrew/bin/nvim '$*'\"
+        end tell
+        "
+    else
+        # Fallback: try to open in current terminal if available
+        exec /opt/homebrew/bin/nvim "$@"
+    fi
+fi

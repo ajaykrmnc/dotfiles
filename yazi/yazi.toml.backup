@@ -1,0 +1,48 @@
+[mgr]
+ratio = [1, 2, 4]
+
+[preview]
+tab_size = 2
+cache_dir = ""
+
+[opener]
+edit = [
+    { run = 'nvim "$@"', desc = "Vim", block = true, for = "unix" },
+]
+
+markdown = [
+    { run = 'glow --style /Users/ajay.kumar/.config/glow/themes/dracula.json "$@"', desc = "Glow Preview", for = "unix" },
+    { run = 'open -a "Typora" "$@"', desc = "Typora (with images)", for = "unix" },
+    { run = 'open -a "Marked 2" "$@"', desc = "Marked 2 (with images)", for = "unix" },
+    { run = 'nvim "$@"', desc = "NeoVim", block = true, for = "unix" },
+]
+
+[open]
+rules = [
+    { name = "*/", use = "edit" },
+    { mime = "text/*", use = "edit" },
+    { mime = "text/markdown", use = "markdown" },
+    { mime = "application/json", use = "edit" },
+    { mime = "application/zip", use = "archive" },
+    { mime = "application/gzip", use = "archive" },
+    { mime = "application/x-tar", use = "archive" },
+    { mime = "application/pdf", use = "pdf" },
+    { name = "*", use = "edit" },
+]
+
+[plugin]
+prepend_previewers = [
+    { name = "*/", run = "folder", sync = true },
+    { name = "*.py", run = "bat" },
+    { name = "*.txt", run = "bat" },
+    { name = "*.md", run = "glow" },
+    { name = "*.markdown", run = "glow" },
+    { mime = "text/markdown", run = "glow" },
+    { mime = "text/*", run = "bat" },
+    { mime = "application/json", run = "bat" },
+    { mime = "image/*", run = "chafa" },
+    { mime = "video/*", run = "ffmpegthumbnailer" },
+    { mime = "audio/*", run = "mediainfo" },
+    { mime = "application/pdf", run = "pdf" },
+]
+
