@@ -7,6 +7,7 @@ return {
     "mason-org/mason.nvim",
     "mason-org/mason-lspconfig.nvim",
     { "j-hui/fidget.nvim", opts = {} },
+    "b0o/schemastore.nvim", -- JSON schemas for better validation
   },
   config = function()
     local lspconfig = require("lspconfig")
@@ -19,6 +20,15 @@ return {
       update_in_insert = false,
       severity_sort = true,
     })
+
+    -- Get capabilities from blink.cmp for proper LSP integration
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+    -- Try to get blink.cmp capabilities if available
+    local has_blink, blink = pcall(require, "blink.cmp")
+    if has_blink then
+      capabilities = blink.get_lsp_capabilities(capabilities)
+    end
 
     -- Simple on_attach function
     local on_attach = function(client, bufnr)
@@ -52,7 +62,7 @@ return {
         function(server_name)
           lspconfig[server_name].setup({
             on_attach = on_attach,
-            capabilities = vim.lsp.protocol.make_client_capabilities(),
+            capabilities = capabilities,
           })
         end,
 
@@ -62,7 +72,7 @@ return {
 
           lspconfig.angularls.setup({
             on_attach = on_attach,
-            capabilities = vim.lsp.protocol.make_client_capabilities(),
+            capabilities = capabilities,
             filetypes = { "typescript", "html", "typescriptreact" },
             root_dir = lspconfig.util.root_pattern("angular.json", "project.json"),
             cmd = {
@@ -80,11 +90,25 @@ return {
         ["lua_ls"] = function()
           lspconfig.lua_ls.setup({
             on_attach = on_attach,
-            capabilities = vim.lsp.protocol.make_client_capabilities(),
+            capabilities = capabilities,
             settings = {
               Lua = {
                 diagnostics = { globals = { "vim" } },
                 workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+              },
+            },
+          })
+        end,
+
+        -- JSON LSP with schema support
+        ["jsonls"] = function()
+          lspconfig.jsonls.setup({
+            on_attach = on_attach,
+            capabilities = capabilities,
+            settings = {
+              json = {
+                schemas = require("schemastore").json.schemas(),
+                validate = { enable = true },
               },
             },
           })

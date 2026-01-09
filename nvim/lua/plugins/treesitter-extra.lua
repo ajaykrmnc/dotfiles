@@ -56,7 +56,12 @@ return {
     else
       opts.ensure_installed = additional_parsers
     end
-    
+
+    -- Ensure highlighting is enabled
+    opts.highlight = opts.highlight or {}
+    opts.highlight.enable = true
+    opts.highlight.additional_vim_regex_highlighting = false
+
     -- Add autotag configuration
     opts.autotag = {
       enable = true,
