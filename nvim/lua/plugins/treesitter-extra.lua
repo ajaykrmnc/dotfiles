@@ -18,12 +18,10 @@ return {
       "scss",
       "json",
       "jsonc",
-      
       -- Configuration files
       "yaml",
       "toml",
       "xml",
-      
       -- Programming languages
       "python",
       "rust",
@@ -32,16 +30,13 @@ return {
       "cpp",
       "java",
       "c_sharp",
-      
       -- Shell and scripting
       "bash",
       "fish",
       "powershell",
-      
       -- Documentation
       "markdown",
       "markdown_inline",
-      
       -- Other useful parsers
       "regex",
       "dockerfile",
@@ -49,7 +44,6 @@ return {
       "gitcommit",
       "diff",
     }
-    
     -- Merge with existing ensure_installed
     if opts.ensure_installed then
       vim.list_extend(opts.ensure_installed, additional_parsers)
@@ -88,7 +82,7 @@ return {
         "hbs",
       },
     }
-    
+
     -- Enhanced textobjects configuration
     opts.textobjects = {
       select = {
@@ -133,7 +127,7 @@ return {
         },
       },
     }
-    
+
     return opts
   end,
 }

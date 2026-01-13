@@ -1,5 +1,4 @@
 -- Minimal LSP Configuration
-
 return {
   "neovim/nvim-lspconfig",
   event = { "BufReadPre", "BufNewFile" },
@@ -9,7 +8,32 @@ return {
     { "j-hui/fidget.nvim", opts = {} },
     "b0o/schemastore.nvim", -- JSON schemas for better validation
   },
-  config = function()
+  opts = {
+    -- Configure servers here to override LazyVim defaults
+    servers = {
+      -- Clangd with query-driver for cross-compilation
+      clangd = {
+        cmd = {
+          "clangd",
+          "-j=48",
+          "--clang-tidy=false",
+          -- Query driver pattern matching .clangd config file
+          "--query-driver=/Users/ajay.kumar/garage/workspace/ap/build/export/toolchain-*/bin/*,/Users/ajay.kumar/garage/workspace/ap/build/export/arm-gnu-toolchain-*/bin/*",
+          "--background-index",
+          -- Compile commands database location
+          "--compile-commands-dir=/Users/ajay.kumar/garage/workspace/ap",
+          -- Enable more detailed logging for debugging
+          "--log=verbose",
+        },
+        -- Set root directory to where .clangd config file is located
+        root_dir = function(fname)
+          local util = require("lspconfig.util")
+          return util.root_pattern(".clangd", "compile_commands.json", ".git")(fname) or util.path.dirname(fname)
+        end,
+      },
+    },
+  },
+  config = function(_, opts)
     local lspconfig = require("lspconfig")
     local mason_lspconfig = require("mason-lspconfig")
 
@@ -23,6 +47,7 @@ return {
 
     -- Get capabilities from blink.cmp for proper LSP integration
     local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities.positionEncodings = { "utf-8", "utf-16" }
 
     -- Try to get blink.cmp capabilities if available
     local has_blink, blink = pcall(require, "blink.cmp")
@@ -53,6 +78,7 @@ return {
       "lua_ls",
       "angularls",
       "marksman",
+      "clangd",
     }
 
     mason_lspconfig.setup({
@@ -60,14 +86,29 @@ return {
       handlers = {
         -- Default handler for all servers
         function(server_name)
+          -- Skip if custom config exists in opts.servers
+          if opts.servers and opts.servers[server_name] then
+            return
+          end
           lspconfig[server_name].setup({
             on_attach = on_attach,
             capabilities = capabilities,
           })
         end,
 
+        -- Clangd with custom configuration
+        ["clangd"] = function()
+          lspconfig.clangd.setup(vim.tbl_deep_extend("force", {
+            on_attach = on_attach,
+            capabilities = capabilities,
+          }, opts.servers and opts.servers["clangd"] or {}))
+        end,
+
         -- Angular Language Server - Fixed for TypeScript resolution
         ["angularls"] = function()
+          if opts.servers and opts.servers["angularls"] then
+            return
+          end
           local mason_path = vim.fn.stdpath("data") .. "/mason/packages/angular-language-server/node_modules"
 
           lspconfig.angularls.setup({

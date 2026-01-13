@@ -7,7 +7,11 @@ return {
 			"sindrets/diffview.nvim", -- optional - Diff integration
 		},
 		config = function()
-			require('neogit').setup({})
+			require('neogit').setup({
+				disable_insert_on_commit = true,
+				use_default_keymaps = true,
+				graph_style = "unicode",
+			})
 			vim.keymap.set('n', "<leader>gg", require('neogit').open, { desc = "Open Neogit" })
 		end
 	},

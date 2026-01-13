@@ -62,3 +62,11 @@ opt.colorcolumn = "120" -- 120 char ruler
 -----------------------------------------------------------------------
 opt.splitbelow = true
 opt.splitright = true
+
+-----------------------------------------------------------------------
+-- Shell configuration (for git commands and external tools)
+-----------------------------------------------------------------------
+opt.shell = "/bin/zsh"
+opt.shellcmdflag = "-c"
+opt.shellquote = ""
+opt.shellxquote = ""
