@@ -4,7 +4,7 @@
 -- Configure clangd using Neovim 0.11+ API directly
 -- This must be done at the top level, not inside a lazy.nvim opts function
 vim.lsp.config("clangd", {
-  cmd = { "/Users/ajay.kumar/garage/workspace/ap/scripts/clangd-tcp-client.sh" },
+  cmd = { "/Users/ajay.kumar/.config/nvim/scripts/clangd-tcp-client.sh" },
   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
   root_markers = {
     "compile_commands.json",
@@ -27,4 +27,3 @@ return {
     },
   },
 }
-
