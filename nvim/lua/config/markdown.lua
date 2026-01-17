@@ -26,7 +26,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.breakindent = true
 
     -- Set text width to 78 characters for formatting
-    vim.opt_local.textwidth = 78
+    vim.opt_local.textwidth = 110
 
     -- Disable colorcolumn for markdown files only
     vim.opt_local.colorcolumn = ""
@@ -40,7 +40,7 @@ vim.api.nvim_create_autocmd("FileType", {
     -- Markdown-specific keymaps
     local keymap = vim.keymap.set
 
-    -- Custom format function for markdown
+    -- Custom format function for markdown (wrap lines at textwidth)
     local function format_markdown()
       -- Save cursor position
       local cursor_pos = vim.api.nvim_win_get_cursor(0)
@@ -52,8 +52,40 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.api.nvim_win_set_cursor(0, cursor_pos)
     end
 
+    -- Join paragraph lines into a single line (unwrap)
+    -- This joins all lines in a paragraph into one continuous line
+    local function join_paragraph()
+      -- Get current paragraph bounds
+      local start_line = vim.fn.search("^\\s*$", "bnW") + 1
+      local end_line = vim.fn.search("^\\s*$", "nW") - 1
+
+      -- Handle edge cases
+      if start_line < 1 then
+        start_line = 1
+      end
+      if end_line < 1 then
+        end_line = vim.fn.line("$")
+      end
+
+      -- Join the lines
+      if end_line > start_line then
+        vim.cmd(start_line .. "," .. end_line .. "join")
+      end
+    end
+
+    -- Join selected lines into a single line
+    local function join_selection()
+      -- Join selected lines with space
+      vim.cmd("'<,'>join")
+    end
+
     -- Override the LSP format keymap for markdown
-    keymap("n", "<leader>bf", format_markdown, vim.tbl_extend("force", opts, { desc = "Format markdown buffer" }))
+    keymap("n", "<leader>bf", format_markdown, vim.tbl_extend("force", opts, { desc = "Format markdown (wrap lines)" }))
+
+    -- Join/unwrap keymaps
+    keymap("n", "<leader>mj", join_paragraph, vim.tbl_extend("force", opts, { desc = "Join paragraph to one line" }))
+    keymap("v", "<leader>mj", join_selection, vim.tbl_extend("force", opts, { desc = "Join selection to one line" }))
+    keymap("n", "gJ", join_paragraph, vim.tbl_extend("force", opts, { desc = "Join paragraph to one line" }))
 
     -- Text formatting
     keymap("n", "<leader>mb", "viwS*", vim.tbl_extend("force", opts, { desc = "Bold word" }))

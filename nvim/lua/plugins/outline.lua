@@ -6,6 +6,11 @@ return {
       width = 30,
     },
     keymaps = {},
+    symbols = {
+      icons = {
+        Null = { icon = "∅", hl = "Identifier" },
+      },
+    },
   },
 
   config = function(_, opts)
